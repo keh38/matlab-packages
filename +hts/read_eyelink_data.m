@@ -1,10 +1,12 @@
-function S = eyelink_read_data(fn)
+function S = read_eyelink_data(fn)
 % $Date: 2022-11-30 08:19:55 -0500 (Wed, 30 Nov 2022) $
 % $Rev: 879 $
 
 oldFolder = pwd;
 [folder, fn] = fileparts(fn);
-cd(folder);
+if ~isempty(folder)
+   cd(folder);
+end
 
 edf = Edf2Mat([fn '.edf']);
 
