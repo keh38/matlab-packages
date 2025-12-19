@@ -134,7 +134,7 @@ if exist(fnEyeLink, 'file')
       eyeTime(k) = eyeData.events.time(isync(k));
    end
    pcTime = double(pcTime - Sync.T0) * 1e-7;
-   
+
    [m, b] = epl.stats.linefit(pcTime, eyeTime);
    Sync.offsetPCToEye = b;
    Sync.driftPCToEye = m;

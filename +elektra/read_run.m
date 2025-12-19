@@ -15,7 +15,7 @@ if ~exist(fn, 'file')
 end
 
 % Read parameter sections
-s = klib.file.parse_ini(fn, 'indicator', '[ELEKTRA DATA]');
+s = epl.file.parse_ini(fn, 'indicator', 'ELEKTRA DATA');
 Header.Info = s.Info;
 Header.Metadata = s.Metadata;
 Header.Config = s.Config;
