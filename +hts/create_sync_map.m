@@ -194,6 +194,31 @@ if exist(fnBDF, 'file')
    Sync.driftPCToBiosemiData = m;
 end
 
+% % 3. Tobii file: map PC time to EyeLink time
+% fnTobii = strrep(fn, '.json', '.tsr');
+% if exist(fnTobii, 'file')
+%    tobiiData = tobii.read_data(fnTobii);
+% 
+%    isync = find(startsWith(eyeData.events.info, 'Sync:'));
+%    % The four-trial protocol is kind of annoying here. We really only need
+%    % every 4th sync message. 
+%    % The EyeLink Interface sends the EyeLink a message in the form
+%    % "Sync:<system time stamp>". 
+%    isync = isync(1:4:end);
+%    pcTime = int64(zeros(length(isync), 1));
+%    eyeTime = NaN(length(isync), 1);
+% 
+%    for k = 1:length(isync)
+%       pcTime(k) = sscanf(eyeData.events.info{isync(k)}, 'Sync:%lu');
+%       eyeTime(k) = eyeData.events.time(isync(k));
+%    end
+%    pcTime = double(pcTime - Sync.T0) * 1e-7;
+% 
+%    [m, b] = epl.stats.linefit(pcTime, eyeTime);
+%    Sync.offsetPCToEye = b;
+%    Sync.driftPCToEye = m;
+% end
+
 % Save Sync structure to .mat file
 fnMatfile = strrep(fn, '.json', '-Sync.mat');
 save(fnMatfile, 'Sync');
