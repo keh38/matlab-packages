@@ -1,23 +1,53 @@
-function [Y, L, varargout] = read_data(fn, varargin)
-% READ_CFTS_ABR_DATA -- read CFTS-format ABR data.
-% Usage: [L, Y, WF] = read_cfts_abr_data(fn);
+function [Data, Header] = read(fn, varargin)
+% cfts.abr.read -- read CFTS-format ABR data.
+% Usage: [D, H] = cfts.abr.read(fn);
 %
 % ---Input---
 %  fn : data file path
 %
 % ---Outputs---
-% L : sound levels
-% Y : matrix of ABR data (microvolts). Each column contains the ABR for one
-%     sound level
-% WF : either 'click' or 'tone'
+% D: data structure, containing...
+%     neural:  matrix of ABR data (in microvolts). Each column contains the ABR for
+%              one sound level
+%     cm:  matrix of CM data (in microvolts).
+%     time  : time vector
+%     level : sound levels
+%
+% H : full data header
 %
 
 text = fileread(fn);
 
+if startsWith(text, ':RUN')
+   [Data, Header] = read_old_format(text);
+   return;
+elseif ~startsWith(text, '[STANDARD ABR]')
+   error('Unexpected ABR file format.');
+end
+
+% Read parameter sections
+[Header, dataStr] = epl.file.parse_ini(text, 'indicator', 'STANDARD ABR');
+Header.Info.Levels = eval([ '[' Header.Info.Levels ']' ]);
+Header.Info.Avgs = eval([ '[' Header.Info.Avgs ']' ]);
+Header.Info.Tries = eval([ '[' Header.Info.Tries ']' ]);
+
+L = Header.Info.Levels;
+
+a = textscan(dataStr, '%f', 'HeaderLines', 1, 'EndOfLine', '\r\n');
+a = reshape(a{1}, 2*length(L)+1, [])';
+
+Data.time = a(:, 1);
+Data.neural = a(:, 1 + (1:length(L)));
+Data.cm = a(:, 1 + length(L) + (1:length(L)));
+Data.level = L;
+
+%--------------------------------------------------------------------------
+function [D, H] = read_old_format(text)
+
 % Split text into data and header
 [splitStart, splitEnd] = regexp(text, ':DATA[\n\r]');
 if isempty(splitStart)
-   error('Unexpected ABR file format.');
+   error('Unexpected ABR file format: missing [DATA]');
 end
 
 header = text(1:splitStart-1);
@@ -71,7 +101,7 @@ L = sscanf(t{1}{1},'%f;');
 % Parse data
 c = textscan(data, '%f');
 Y = reshape(c{1}, length(L), [])';
-
+H = header;
 %--------------------------------------------------------------------------
-% END OF READ_CFTS_ABR_DATA.M
+% END OF CFTS.ABR.READ.M
 %--------------------------------------------------------------------------
