@@ -1,4 +1,4 @@
-function Data = read_data(fn)
+function Data = read_tobii_data(fn)
 
 dataFormat = {
     'int64', [1 1], 'deviceTime';
@@ -23,15 +23,22 @@ m = memmapfile(fn, ...
 
 d = m.Data;
 
-Data.deviceTime = [d.deviceTime];
-Data.systemTime = [d.systemTime];
+Data.deviceTime = double([d.deviceTime]) * 1e-6;
+Data.systemTime = double([d.systemTime]) * 1e-6;
+
 Data.leftPupil = [d.leftPupil];
 Data.rightPupil = [d.rightPupil];
 
+isValid = logical([d.leftGazeValid]);
 Data.leftX = [d.leftX];
-Data.leftY = [d.leftY];
-Data.leftGazeValid = logical([d.leftGazeValid]);
+Data.leftX(~isValid) = NaN;
 
+Data.leftY = [d.leftY];
+Data.leftY(~isValid) = NaN;
+
+isValid = logical([d.rightGazeValid]);
 Data.rightX = [d.rightX];
+Data.rightX(~isValid) = NaN;
+
 Data.rightY = [d.rightY];
-Data.rightGazeValid = logical([d.rightGazeValid]);
+Data.rightY(~isValid) = NaN;

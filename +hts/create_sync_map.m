@@ -58,9 +58,13 @@ for k = 1:length(streamNames)
    rtt = min(rtt, [], 2);
 
    tlocal = double(data.LocalTime(ifilt) - Sync.T0) * 1e-7;
-   % Subtract off half the round-trip-time
-   % tstream = double(data.StreamTime(ifilt) - Sync.T0) * 1e-7 - 1e-3 * rtt(:) / 2;
-   tstream = double(data.StreamTime(ifilt)) * 1e-6;
+
+    % Subtract off half the round-trip-time from the stream time
+   if strcmp(streamNames{k}, 'TOBII.INTERFACE')
+      tstream = double(data.StreamTime(ifilt)) * 1e-7 - 1e-3 * rtt(:) / 2;
+   else
+      tstream = double(data.StreamTime(ifilt) - Sync.T0) * 1e-7 - 1e-3 * rtt(:) / 2;
+   end
 
    [m, b] = epl.stats.linefit(tlocal, tstream);
 
