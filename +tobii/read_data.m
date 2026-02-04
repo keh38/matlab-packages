@@ -27,3 +27,11 @@ Data.deviceTime = [d.deviceTime];
 Data.systemTime = [d.systemTime];
 Data.leftPupil = [d.leftPupil];
 Data.rightPupil = [d.rightPupil];
+
+Data.leftX = [d.leftX];
+Data.leftY = [d.leftY];
+Data.leftGazeValid = logical([d.leftGazeValid]);
+
+Data.rightX = [d.rightX];
+Data.rightY = [d.rightY];
+Data.rightGazeValid = logical([d.rightGazeValid]);

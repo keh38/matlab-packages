@@ -59,7 +59,8 @@ for k = 1:length(streamNames)
 
    tlocal = double(data.LocalTime(ifilt) - Sync.T0) * 1e-7;
    % Subtract off half the round-trip-time
-   tstream = double(data.StreamTime(ifilt) - Sync.T0)* 1e-7 - 1e-3 * rtt(:) / 2;
+   % tstream = double(data.StreamTime(ifilt) - Sync.T0) * 1e-7 - 1e-3 * rtt(:) / 2;
+   tstream = double(data.StreamTime(ifilt)) * 1e-6;
 
    [m, b] = epl.stats.linefit(tlocal, tstream);
 
