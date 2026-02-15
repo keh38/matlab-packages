@@ -1,4 +1,6 @@
-function Data = read_joystick_log(fn)
+function Data = read_joystick_log(fn, T0)
+
+if nargin < 2, T0 = []; end
 
 dataFormat = {
     'int64', [1 1], 'time';
@@ -20,7 +22,11 @@ m = memmapfile(fn, ...
 d = m.data;
 
 t = [d.time];
-Data.time = double(t - t(1)) * 1e-7;
+if isempty(T0)
+   T0 = t(1);
+end
+
+Data.time = double(t - T0) * 1e-7;
 Data.gain = [d.gain];
 Data.joystick = [d.joystick];
 Data.raw = [d.raw];
