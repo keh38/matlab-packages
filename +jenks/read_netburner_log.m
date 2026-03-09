@@ -51,8 +51,10 @@ m = memmapfile(fn, ...
 d = m.data;
 
 t = [d.time];
+Data.itime = t;
 Data.time = double(t - t(1)) * 1e-7;
 Data.joystickAngle = [d.joystickAngle];
+Data.joystickRawAngle = [d.joyRawAngle];
 
 Data.pitchCmd = [d.pitchCmd];
 Data.rollCmd = [d.rollCmd];

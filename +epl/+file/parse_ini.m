@@ -34,6 +34,9 @@ while kln < length(lines)
          dataType = Section;
          Section = 'Info';
       else
+         if isempty(Section)
+            Section = 'Unlabeled';
+         end
          Section = epl.file.create_valid_varname(Section);
       end
       kln = kln + 1;
@@ -72,6 +75,7 @@ while index <= length(lines)
    end
    
    if ischar(val)
+      val = strrep(val, '''', '''''');
       eval(['P.' curKey '=''' val ''';']);
    else
       eval(['P.' curKey '=val;']);

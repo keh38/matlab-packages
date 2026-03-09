@@ -1,5 +1,5 @@
-function TR = read_trace_data(FN, flatten)
-% tosca.read_trace_data -- read diagnostic trace data
+function TR = read_trace_data(FN, options)
+% tosca.read_trace_data -- read trace data
 %
 % Usage: TR = tosca.read_trace_data(fn)
 % 
@@ -9,11 +9,12 @@ function TR = read_trace_data(FN, flatten)
 % Output:
 %   TR : structure array containing trace data (by trial).
 %
-% $Rev: 3425 $
-% $Date: 2022-11-30 08:19:16 -0500 (Wed, 30 Nov 2022) $
-%
 
-if nargin < 2, flatten = false; end
+arguments
+   FN (1,:) char = ''
+   options.flatten (1,:) logical = true
+   options.concise (1,:) logical = false
+end
 
 if ~contains(FN, '.trace')
    FN = strrep(FN, '.txt', '.trace.txt');
@@ -41,12 +42,22 @@ TR = struct( ...
    'Source', {} ...
 );
 
-if flatten
-   TR(1).Time = t;
-   TR.Event = e;
-   TR.Message = m;
-   TR.Data = d;
-   TR.Source = s;
+if options.flatten
+
+   ifilt = true(size(t));
+   if options.concise
+      ifilt = e < 3;
+   end
+
+   traceData.time = t(ifilt);
+   traceData.code = e(ifilt);
+   traceData.item = m(ifilt);
+
+   if ~options.concise
+      traceData.Data = d;
+      traceData.Source = s;
+   end
+   TR = traceData;
    return;
 end
 

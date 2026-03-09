@@ -28,6 +28,10 @@ else
    sigspec = sigspec(1:end/2);
    freq = freq(1:end/2);
 
+   sigspec = sigspec(:);
+   freq = freq(:);
+   calFreq = calFreq(:);
+
    calspec = interp1(calFreq, spec, freq);
 
    s = sigspec/(length(carrier)) .* calspec;

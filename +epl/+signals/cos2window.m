@@ -1,27 +1,28 @@
-function Yg = cos2window(Y, R_ms, Fs_Hz)
-%COS2WINDOW - Create a cosine-squared window.
-% Usage: W = cos2window(X, R, Fs)
-%	X	Signal to be windowed
-%	R_ms	Ramplength, ms
-%	Fs_Hz	Sampling rate, Hz
-%
+function Ygated = cos2window(Y, options)
+arguments
+   Y  (:,1) double
+   options.SampleRate   (1,1) double = 1e5;
+   options.Ramp         (1,1) double = 5;
+   options.Duration     (1,1) double = Inf;
+end
 
-sinePeriod_s = 2*R_ms/1000;
-npts = sinePeriod_s * Fs_Hz;
-sineFrequency = 1/sinePeriod_s;
+fs = options.SampleRate;
+ramp = options.Ramp;
+duration = options.Duration;
 
-sineBuffer = -cos(2*pi*sineFrequency*(0:npts-1)/Fs_Hz);
+sinePeriod_s = 2 * ramp / 1000;
+npts = round(sinePeriod_s * fs);
+sineFrequency = 1 / sinePeriod_s;
+
+sineBuffer = -cos(2*pi*sineFrequency*(0:npts-1)/fs);
 sineBuffer = (sineBuffer + 1)/2;
 sineBuffer = sineBuffer.^2;
 
 %  Split the sinusoid in half and fill center with ones
-numPoints = length(Y);
+numPoints = min(length(Y), round(fs * duration/1000));
 numOnes = numPoints - length(sineBuffer);
 N = length(sineBuffer);
-G = [sineBuffer(1:round(N/2)) ones(1,numOnes) sineBuffer((round(N/2)+1):end)];
+G = zeros(size(Y));
+G(1:numPoints) = [sineBuffer(1:round(N/2)) ones(1,numOnes) sineBuffer((round(N/2)+1):end)];
 
-if size(Y,1) ~= size(G,1)
-   G = G';
-end
-
-Yg = Y .* G;
+Ygated = Y .* G;

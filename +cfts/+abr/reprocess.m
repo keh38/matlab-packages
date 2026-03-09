@@ -43,7 +43,7 @@ cm = neural;
 nkeep = 0;
 
 rejectThreshold = header.Params.Reject;
-rejectThreshold = inf;
+% rejectThreshold = inf;
 
 for k = 1:2:size(y, 2)
    a = y(:, k);
