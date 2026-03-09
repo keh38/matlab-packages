@@ -1,4 +1,4 @@
-function Data = read_netburner_log(fn)
+function [Data, T0] = read_netburner_log(fn)
 
 dataFormat = {
     'int64', [1 1], 'time';
@@ -51,7 +51,11 @@ m = memmapfile(fn, ...
 d = m.data;
 
 t = [d.time];
+<<<<<<< HEAD
 Data.itime = t;
+=======
+T0 = t(1);
+>>>>>>> 858bde258415c2372d085b2586c6e564786c1118
 Data.time = double(t - t(1)) * 1e-7;
 Data.joystickAngle = [d.joystickAngle];
 Data.joystickRawAngle = [d.joyRawAngle];
