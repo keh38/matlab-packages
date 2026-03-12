@@ -44,6 +44,19 @@ TR = struct( ...
 
 if options.flatten
 
+   istate = find(e == 2);
+   for k = 1:length(istate)
+      ibuf = epl.util.findFrom(e, 5, istate(k), 2);
+      tadj = mean(t(ibuf));
+      t(istate(k)) = tadj;
+   end
+
+   itrial = find(e == 1);
+   for k = 1:length(itrial)
+      istate = epl.util.findFrom(e, 2, itrial(k), 1);
+      t(itrial(k)) = t(istate);
+   end
+
    ifilt = true(size(t));
    if options.concise
       ifilt = e < 3;

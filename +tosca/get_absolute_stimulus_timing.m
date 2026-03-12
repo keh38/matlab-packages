@@ -28,19 +28,22 @@ for k = 1:numel(data)
    stimOnTime = tstate + timing(igroup).delay * 1e-3;
    stimOffTime = stimOnTime + timing(igroup).duration * 1e-3;
 
-   % Visual stimuli have a small additional delay we should account for
-   if timing(igroup).isVisual
-      % Find the next "Draw" call after the start of the state
-      offset = find(strcmp(traceLog.item(istate:end), "Draw"), 1);
-      idraw = istate + offset - 1;
-
-      % compute the delay
-      visDelay = traceLog.time(idraw) - tstate;
-
-      % adjust
-      stimOnTime = stimOnTime + visDelay;
-      stimOffTime = stimOffTime + visDelay;
-   end
-
+   % % Visual stimuli have a small additional delay we should account for
+   % if timing(igroup).isVisual
+   %    % Find the next "Draw" call after the start of the state
+   %    offset = find(strcmp(traceLog.item(istate:end), "Draw"), 1);
+   % 
+   %    if offset > 0
+   %       idraw = istate + offset - 1;
+   % 
+   %       % compute the delay
+   %       visDelay = traceLog.time(idraw) - tstate;
+   % 
+   %       % adjust
+   %       stimOnTime = stimOnTime + visDelay;
+   %       stimOffTime = stimOffTime + visDelay;
+   %    end
+   % end
+   % 
    stimTime(k, :) = [stimOnTime stimOffTime];
 end

@@ -65,8 +65,46 @@ M = readmatrix(fn, 'Delimiter', '\t');
 
 % the logs have different numbers of columns, depending on their age
 numCols = size(M, 2);
+if numCols == 4
+   % EXAMPLE:
+   % 248.000000	249.000000	3684234309.674025	NaN
+   % 249.000000	250.000000	3684234309.707006	NaN
+   % 1.000000	-1.000000	3684234045.732683	NaN
+   % 250.000000	251.000000	3684234309.739987	NaN
+   % 251.000000	252.000000	3684234309.773967	NaN
+   %
+   % COLUMNS (video):
+   % 1. Frame number reported by camera
+   % 2. Same?
+   % 3. Timestamp on video recording video
+   % 4. NaN -- meaning???
 
-if numCols == 5
+   % COLUMNS (trial markers)
+   % 1. == 1 indicates new Tosca trial
+   % 2. absolute value = trial number
+   % 3. Time stamp on video recording device
+   % 4. NaN -- meaning???
+   % Extract the trial data
+   itrial = M(:, 1) == 1;        % first column == 1 ==> trial
+   trialNum = abs(M(itrial, 2)); % absolute value  = trial number
+   trialVideoTime = M(itrial, 3);
+   trialToscaTime = []; % don't have it, will have to get it elsewhere
+
+   % Extract the video data
+   cumulativeFrameNum = M(~itrial, 1);
+   videoTime = M(~itrial, 3);
+   aviFrameNum = []; % don't have this either, but don't really need it
+
+   % Package and return
+   toscaTrials.number = trialNum;
+   toscaTrials.videoTime = trialVideoTime;
+   toscaTrials.toscaTime = trialToscaTime;
+
+   videoLog.cumulativeFrameNum = cumulativeFrameNum;
+   videoLog.videoTime = videoTime;
+   videoLog.aviFrameNum = aviFrameNum;
+
+elseif numCols == 5
    % EXAMPLE:
    % 551.000000	551.000000	3725455835.254924	NaN	548.000000
    % 552.000000	552.000000	3725455835.288262	NaN	549.000000
@@ -77,14 +115,14 @@ if numCols == 5
    % COLUMNS (video):
    % 1. Frame number reported by camera
    % 2. Same?
-   % 3. Timestamp on PC recording video
+   % 3. Timestamp on video recording video
    % 4. NaN
    % 5. Frame number in the .avi
 
    % COLUMNS (trial markers)
    % 1. == 1 indicates new Tosca trial
    % 2. absolute value = trial number
-   % 3. Time stamp on PC recording device
+   % 3. Time stamp on video recording device
    % 4. Time stamp on Tosca PC
    % 5. NaN
 
