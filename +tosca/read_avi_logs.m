@@ -82,13 +82,16 @@ if numCols == 4
    % COLUMNS (trial markers)
    % 1. == 1 indicates new Tosca trial
    % 2. absolute value = trial number
-   % 3. Time stamp on video recording device
+   % 3. Time stamp on Tosca PC
    % 4. NaN -- meaning???
    % Extract the trial data
    itrial = M(:, 1) == 1;        % first column == 1 ==> trial
    trialNum = abs(M(itrial, 2)); % absolute value  = trial number
-   trialVideoTime = M(itrial, 3);
-   trialToscaTime = []; % don't have it, will have to get it elsewhere
+   trialToscaTime = M(itrial, 3);
+   trialVideoTime = []; % don't have it
+   % Let's approximate the video frame time as the mean of the frame times
+   % immediately preceding and following the trial marks in the log
+   trialVideoTime = mean([M(find(itrial)-1, 3) M(find(itrial)+1, 3)], 2);
 
    % Extract the video data
    cumulativeFrameNum = M(~itrial, 1);
