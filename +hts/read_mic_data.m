@@ -34,6 +34,7 @@ x = (0:numRecords-1) * frameSize/8;
 
 ti = b + m * (1:length(mic));
 
-data.time = int64(ti * 1e7) + T0;
+data.itime = int64(ti * 1e7) + T0;
+data.time = ti;
 data.mic = mic;
 
