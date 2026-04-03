@@ -6,7 +6,7 @@ function Y = read_record(header, startingFrom)
 offset = header.HeaderSize + startingFrom * (header.SamplesPerRecord(1)*header.NumberOfChannels*3);
 numwords = header.SamplesPerRecord(1) * header.NumberOfChannels;
 
-buf = bdf_read_24bit(header.Path, offset, numwords);
+buf = bdf.read_24bit(header.Path, offset, numwords);
 
 Y = reshape(buf, header.SamplesPerRecord(1), header.NumberOfChannels);
 Y = Y * (header.PhysicalMax(1) - header.PhysicalMin(1)) / (header.DigitalMax(1) - header.DigitalMin(1));  
