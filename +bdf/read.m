@@ -7,7 +7,7 @@ Y = NaN(header.NumberOfChannels, header.SamplesPerRecord(1)*numRecords);
 
 ioff = 0;
 for k = 1:numRecords
-   y = bdf_read_record(header, startingFrom + k - 1);
+   y = bdf.read_record(header, startingFrom + k - 1);
    Y(:, ioff + (1:header.SamplesPerRecord(1))) = y';
    
    ioff = ioff + header.SamplesPerRecord(1);
