@@ -1,4 +1,4 @@
-function Sync = create_sync_map(fn)
+function Sync = create_sync_map(fn, T0)
 % CREATE_SYNC_MAP -- compiles synchronization data from HTS measurement.
 % Usage: create_sync_map(filename)
 % 
@@ -7,6 +7,7 @@ function Sync = create_sync_map(fn)
 % Outputs a .mat file containing a structure 'Sync' whose fields describe
 % the transformations between various clocks.
 %
+if nargin < 2, T0 = []; end
 
 % 1. Stream Sync log: map tablet time to PC time
 fnStreamSync = strrep(fn, '.json', '-StreamSync.log');
@@ -31,7 +32,11 @@ rtt = min(rtt, [], 2);
 % times without losing precision, we need to reference them to some recent
 % time. Doesn't matter what it is, we just need to be consistent. We will
 % use the first PC timestamp in the -StreamSync.log for this purpose.
-Sync.T0 = data.LocalTime(1);
+if isempty(T0)
+   Sync.T0 = data.LocalTime(1);
+else
+   Sync.T0 = T0;
+end
 
 tlocal = double(data.LocalTime(ifilt) - Sync.T0) * 1e-7;
 % Subtract off half the round-trip-time
@@ -186,15 +191,17 @@ if exist(fnBDF, 'file')
    end
 
    % for reasons yet to be sorted out, the Biosemi system sometimes misses
-   % markers.
+   % markers. 2026-04-22: and sometimes has extras???
    while true
-      ibig = find(abs(markerTimes - syncPCTime(1:length(markerTimes))) > 4, 1);
+      n = min(length(markerTimes), length(syncPCTime));
+      ibig = find(abs(markerTimes(1:n) - syncPCTime(1:n)) > 4, 1);
       if isempty(ibig), break; end
 
       syncPCTime = syncPCTime([1:ibig-1 ibig+1:end]);
    end
 
-   [m, b] = epl.stats.linefit(syncPCTime(1:length(markerTimes)), markerTimes);
+   n = min(length(markerTimes), length(syncPCTime));
+   [m, b] = epl.stats.linefit(syncPCTime(1:n), markerTimes(1:n));
    Sync.offsetPCToBiosemiData = b;
    Sync.driftPCToBiosemiData = m;
 end
