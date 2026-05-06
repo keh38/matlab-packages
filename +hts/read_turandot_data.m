@@ -3,8 +3,13 @@ function [Data, Header] = read_turandot_data(fn)
 try
    s = loadjson(fn);
    Data = s.data;
-   Header.info = s.info;
-   Header.params = s.params;
+
+   fieldnames = fields(s);
+   for k = 1:length(fieldnames)
+      if isequal(fieldnames{k}, 'data'), continue; end
+      Header.(fieldnames{k}) = s.(fieldnames{k});
+   end
+
 catch
 
    text = fileread(fn);
