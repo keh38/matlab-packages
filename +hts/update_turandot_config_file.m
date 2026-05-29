@@ -7,8 +7,15 @@ wordsToReplace = {
     'level',         'Level';
     'modulation',    'Modulation';
     'Duration_ms',   'Width_ms';
+    'fileName',      'Filename';
+    'filter',        'Filter';
+    'shape',         'Shape';
+    'bandwidthMethod', 'BandMode';
+    'sweepable',     'Sweepable';
+    'brickwall',     'Brickwall';
+    'oneShot',       'OneShot';
+    'canComputeReference', 'CanComputeReference';
 };
-
 
 fp = fopen(filePath, 'rb');
 xml = fread(fp, '*char')';
