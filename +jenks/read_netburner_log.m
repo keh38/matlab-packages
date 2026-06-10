@@ -51,11 +51,8 @@ m = memmapfile(fn, ...
 d = m.data;
 
 t = [d.time];
-<<<<<<< HEAD
-Data.itime = t;
-=======
 T0 = t(1);
->>>>>>> 858bde258415c2372d085b2586c6e564786c1118
+Data.itime = t;
 Data.time = double(t - t(1)) * 1e-7;
 Data.joystickAngle = [d.joystickAngle];
 Data.joystickRawAngle = [d.joyRawAngle];

@@ -22,16 +22,13 @@ m = memmapfile(fn, ...
 d = m.data;
 
 t = [d.time];
-<<<<<<< HEAD
 Data.itime = t;
-Data.time = double(t - t(1)) * 1e-7;
-=======
+% Data.time = double(t - t(1)) * 1e-7;
 if isempty(T0)
    T0 = t(1);
 end
 
 Data.time = double(t - T0) * 1e-7;
->>>>>>> 858bde258415c2372d085b2586c6e564786c1118
 Data.gain = [d.gain];
 Data.joystick = [d.joystick];
 Data.raw = [d.raw];
