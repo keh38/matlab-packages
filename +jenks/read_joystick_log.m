@@ -3,15 +3,16 @@ function Data = read_joystick_log(fn, T0)
 if nargin < 2, T0 = []; end
 
 dataFormat = {
-    'int64', [1 1], 'time';
     'double', [1 1], 'gain';
     'double', [1 1], 'joystick';
     'double', [1 1], 'raw';
     'uint8', [1 1], 'locked';
-    'uint8', [1 1], 'sent';
+    'int64', [1 1], 'time';
+    'int32', [1 1], 'packetNumber';
+    'double', [1 1], 'acqTime';
 };
 
-recordSize = 34;
+recordSize = 45;
 finfo = dir(fn);
 numRecords = floor(finfo.bytes / recordSize);
 
@@ -33,6 +34,7 @@ Data.gain = [d.gain];
 Data.joystick = [d.joystick];
 Data.raw = [d.raw];
 Data.locked = [d.locked] > 0;
-Data.sent = [d.sent] > 0;
+Data.acqTime = [d.acqTime];
+Data.number = [d.packetNumber];
 
 clear m;

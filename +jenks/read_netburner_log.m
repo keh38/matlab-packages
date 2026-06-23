@@ -2,6 +2,7 @@ function [Data, T0] = read_netburner_log(fn)
 
 dataFormat = {
     'int64', [1 1], 'time';
+    'int32', [1 1], 'late';
     'int32', [1 1], 'magicVersion';
     'int32', [1 1], 'numCommands';
     'int32', [1 1], 'numFeedbacks';
@@ -40,7 +41,7 @@ dataFormat = {
 };
 
 
-recordSize = 148;
+recordSize = 152;
 finfo = dir(fn);
 numRecords = floor(finfo.bytes / recordSize);
 
@@ -54,6 +55,7 @@ t = [d.time];
 T0 = t(1);
 Data.itime = t;
 Data.time = double(t - t(1)) * 1e-7;
+Data.late = [d.late];
 Data.joystickAngle = [d.joystickAngle];
 Data.joystickRawAngle = [d.joyRawAngle];
 
