@@ -82,7 +82,7 @@ end
 
 %% --- HELPERS ------------------------------------------------------------
 function attackLog = get_attack_log(playerEvents)
-   iattack = find(strcmpi(playerEvents.description, 'attack'));
+   iattack = find(startsWith(playerEvents.description, 'Attack'));
    
    coe = cell(length(iattack), 1);
    attackLog = struct(...

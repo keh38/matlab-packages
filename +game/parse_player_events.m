@@ -5,7 +5,7 @@ time = events.time - T0;
 labels = cell(size(time));
 
 for k = 1:length(events.description)
-   if strcmpi(events.description{k}, 'attack')
+   if startsWith(events.description{k}, 'Attack')
       labels{k} = ['attack: ' attack_code_to_label(events.value(k))];
    elseif strcmpi(events.description{k}, 'state')
       labels{k} = status_code_to_label(events.value(k));
