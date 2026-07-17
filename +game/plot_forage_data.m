@@ -1,4 +1,9 @@
-function plot_forage_data(data)
+function plot_forage_data(data, options)
+
+arguments
+   data  struct
+   options.showTiles logical = false
+end
 
 targetColor = [0.5 0.75 0];
 dummyColor = [0.85 0.7 0.7];
@@ -75,6 +80,11 @@ axis tight;
 axis square;
 axis off;
 
+if options.showTiles
+   layout = read_layout(data.level.levelNumber);
+   show_tiles(layout);
+end
+
 [~, name] = fileparts(data.header.FilePath);
 title(name);
 
@@ -97,5 +107,44 @@ function attackLog = get_attack_log(playerEvents)
       attackLog(k).channelType = 0;
       attackLog(k).channelIndex = 0;
    end
+
+end
+
+%--------------------------------------------------------------------------
+function layout = read_layout(levelNum)
+
+layoutFolder = fullfile(getenv("DEVROOT"), 'C462\c462-asset-bundles\Layouts');
+layoutPath = fullfile(layoutFolder, sprintf('Level%02d.json', levelNum));
+
+json = fileread(layoutPath);
+layout = jsondecode(json);
+
+end
+
+%--------------------------------------------------------------------------
+function show_tiles(layout)
+
+for k = 1:length(layout.Targets)
+   xt = layout.Targets(k).Position.x;
+   zt = layout.Targets(k).Position.z;
+
+   v = layout.Targets(k).vertices;
+   x = [v.x];
+   z = [v.z];
+
+   x = xt + [x(2:end) x(2)];
+   z = zt + [z(2:end) z(2)];
+
+   plot(x, z, 'k');
+
+   r = 15;
+   pos = [xt-r zt-r 2*r 2*r];
+   rectangle('Position', pos, 'Curvature', [1 1], 'EdgeColor', 0.5*[1 1 1]);
+
+   text(xt, zt, num2str(k), ...
+      'FontSize', 18, ...
+      'HorizontalAlignment', 'left', ...
+      'VerticalAlignment', 'middle');
+end
 
 end

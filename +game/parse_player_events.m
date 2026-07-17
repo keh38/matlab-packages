@@ -48,6 +48,10 @@ elseif code == 4
    label = 'no charge';
 elseif code == 5
    label = 'finished';
+elseif code == 6
+   label = 'paused';
+elseif code == 7
+   label = 'resume';
 else
    label = 'unknown';
 end
