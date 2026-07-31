@@ -8,11 +8,14 @@ function plot_forage_data(data, options)
 
 arguments
    data  struct
+   options.hax handle = []
    options.showTiles logical = false
    options.labelTiles logical = true
 end
 
 % --- Preliminaries ---
+hax = options.hax;
+
 targetColor = [0.5 0.75 0];
 dummyColor = [0.85 0.7 0.7];
 playerColor = [0 0 1];
@@ -20,10 +23,13 @@ playerColor = [0 0 1];
 symbolmap = dictionary(["KCNQ2", "GABAA", "AMPA"], ["o", "s", "^"]);
 
 % --- Start the plot ---
-h = figure();
-% set(h, 'WindowStyle', 'docked');
-clf;
-hold on;
+if isempty(hax)
+   figure();
+   % set(h, 'WindowStyle', 'docked');
+   clf;
+   hax = gca;
+end
+hold(hax, 'on');
 
 % --- Plot the arena outline ---
 xx = [-1 -1 1 1 -1];
@@ -32,7 +38,7 @@ zz = [-1 1 1 -1 -1];
 x = data.arena.Width/2 * xx;
 z = data.arena.Length/2 * zz;
 
-plot(x, z, 'k-', 'LineWidth', 3);
+plot(hax, x, z, 'k-', 'LineWidth', 3);
 
 % radius around each channel. Player must be within this radius for
 % an attack (fix attempt) to happen
@@ -46,7 +52,7 @@ for k = 1:length(data.arena.Targets)
    rectangle('Position', pos, 'Curvature', [1 1], 'EdgeColor', targetColor);
 
    symbol = symbolmap(target.Shape);
-   plot(target.Position.x, target.Position.z, symbol, ...
+   plot(hax, target.Position.x, target.Position.z, symbol, ...
       'Color', targetColor, ...
       'MarkerSize', 8, ...
       'MarkerFaceColor', targetColor);
@@ -55,7 +61,7 @@ for k = 1:length(data.arena.Targets)
    pos = [target.DecoyPosition.x-r target.DecoyPosition.z-r 2*r 2*r];
    rectangle('Position', pos, 'Curvature', [1 1], 'EdgeColor', dummyColor);
 
-   plot(target.DecoyPosition.x, target.DecoyPosition.z, 'o', ...
+   plot(hax, target.DecoyPosition.x, target.DecoyPosition.z, 'o', ...
       'Color', dummyColor, ...
       'MarkerSize', 4);%, ...
       % 'MarkerFaceColor', dummyColor);
@@ -71,35 +77,36 @@ for k = 1:length(data.arena.Randos)
    rectangle('Position', pos, 'Curvature', [1 1], 'EdgeColor', dummyColor);
 
    pos = data.arena.Randos(k).Position;
-   plot(pos.x, pos.z, 'o', ...
+   plot(hax, pos.x, pos.z, 'o', ...
       'Color', dummyColor, ...
       'MarkerSize', 4, ...
       'MarkerFaceColor', dummyColor);
 end
 
 % --- Plot the player movement ---
-player = data.player;
-plot(player.X(1), player.Z(1), 's', 'Color', playerColor, 'MarkerFaceColor', playerColor);
+if isfield(data, 'player')
+   player = data.player;
+   plot(hax, player.X(1), player.Z(1), 's', 'Color', playerColor, 'MarkerFaceColor', playerColor);
 
-plot(player.X, player.Z, '-', 'Color', playerColor);
+   plot(hax, player.X, player.Z, '-', 'Color', playerColor);
 
-% Read the attack log and plot the attacks (channel fix attempts)
-attackLog = get_attack_log(player.events);
+   % Read the attack log and plot the attacks (channel fix attempts)
+   attackLog = get_attack_log(player.events);
 
-for k = 1:length(attackLog)
-   [~, idx] = min(abs(attackLog(k).time - player.Time));
-   h = plot(player.X(idx), player.Z(idx), '^', 'Color', playerColor);
-   if attackLog(k).type == 1 % wrong
-      set(h, 'MarkerFaceColor', 'r');
-   elseif attackLog(k).type == 2 % right
-      set(h, 'MarkerFaceColor', 'g');
+   for k = 1:length(attackLog)
+      [~, idx] = min(abs(attackLog(k).time - player.Time));
+      h = plot(hax, player.X(idx), player.Z(idx), '^', 'Color', playerColor);
+      if attackLog(k).type == 1 % wrong
+         set(h, 'MarkerFaceColor', 'r');
+      elseif attackLog(k).type == 2 % right
+         set(h, 'MarkerFaceColor', 'g');
+      end
    end
 end
 
-axis tight;
-axis equal;
-% axis square;
-axis off;
+axis(hax, 'tight');
+axis(hax, 'equal');
+axis(hax, 'off');
 
 % Useful for debugging: show the target areas (the puzzle pieces). Requires
 % access to the level layout .json files.
@@ -109,7 +116,7 @@ if options.showTiles
 end
 
 if options.labelTiles
-   label_tiles(data.arena);
+   label_tiles(hax, data.arena);
 end
 
 [~, name] = fileparts(data.header.FilePath);
@@ -172,13 +179,13 @@ end
 end
 
 %--------------------------------------------------------------------------
-function label_tiles(layout)
+function label_tiles(hax, layout)
 
 for k = 1:length(layout.Targets)
    xt = layout.Targets(k).Position.x;
    zt = layout.Targets(k).Position.z;
 
-   text(xt, zt, num2str(k), ...
+   text(hax, xt, zt, num2str(k), ...
       'FontSize', 18, ...
       'HorizontalAlignment', 'left', ...
       'VerticalAlignment', 'middle');
