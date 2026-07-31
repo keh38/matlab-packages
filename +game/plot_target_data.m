@@ -35,7 +35,7 @@ for k = 1:length(data.targetClipTrack)
 end
 
 ylim([0 length(data.targetClipTrack)+1]);
-ylabel('Target number');
+ylabel({'Stimulus', '(target number)'});
 
 % --- Create the next two panels ---
 ax2 = nexttile;
@@ -69,7 +69,7 @@ yline(ax3, data.arena.Radius);
 linkaxes([ax1 ax2 ax3], 'x');
 
 [~, name] = fileparts(data.header.FilePath);
-title(ax1, name);
+title(ax1, sprintf('%s:Level%02d', name, data.level.levelNumber));
 
 
 

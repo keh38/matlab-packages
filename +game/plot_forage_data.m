@@ -9,6 +9,7 @@ function plot_forage_data(data, options)
 arguments
    data  struct
    options.showTiles logical = false
+   options.labelTiles logical = true
 end
 
 % --- Preliminaries ---
@@ -20,7 +21,7 @@ symbolmap = dictionary(["KCNQ2", "GABAA", "AMPA"], ["o", "s", "^"]);
 
 % --- Start the plot ---
 h = figure();
-set(h, 'WindowStyle', 'docked');
+% set(h, 'WindowStyle', 'docked');
 clf;
 hold on;
 
@@ -107,8 +108,12 @@ if options.showTiles
    show_tiles(layout);
 end
 
+if options.labelTiles
+   label_tiles(data.arena);
+end
+
 [~, name] = fileparts(data.header.FilePath);
-title(name);
+title(sprintf('%s: Level%02d', name, data.level.levelNumber));
 
 end
 
@@ -162,6 +167,16 @@ for k = 1:length(layout.Targets)
    r = 15;
    pos = [xt-r zt-r 2*r 2*r];
    rectangle('Position', pos, 'Curvature', [1 1], 'EdgeColor', 0.5*[1 1 1]);
+end
+
+end
+
+%--------------------------------------------------------------------------
+function label_tiles(layout)
+
+for k = 1:length(layout.Targets)
+   xt = layout.Targets(k).Position.x;
+   zt = layout.Targets(k).Position.z;
 
    text(xt, zt, num2str(k), ...
       'FontSize', 18, ...
