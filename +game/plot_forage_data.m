@@ -1,21 +1,30 @@
 function plot_forage_data(data, options)
+% PLOT_FORAGE_DATA -- plots the player's path and attacks
+% Usage: game.plot_forage_data(data, ...);
+%
+% --- INPUTS ---
+% data : data log (see game.read_master_data_log)
+%
 
 arguments
    data  struct
    options.showTiles logical = false
 end
 
+% --- Preliminaries ---
 targetColor = [0.5 0.75 0];
 dummyColor = [0.85 0.7 0.7];
 playerColor = [0 0 1];
 
 symbolmap = dictionary(["KCNQ2", "GABAA", "AMPA"], ["o", "s", "^"]);
 
+% --- Start the plot ---
 h = figure();
 set(h, 'WindowStyle', 'docked');
 clf;
 hold on;
 
+% --- Plot the arena outline ---
 xx = [-1 -1 1 1 -1];
 zz = [-1 1 1 -1 -1];
 
@@ -24,7 +33,11 @@ z = data.arena.Length/2 * zz;
 
 plot(x, z, 'k-', 'LineWidth', 3);
 
-r = 2;
+% radius around each channel. Player must be within this radius for
+% an attack (fix attempt) to happen
+r = 2; 
+
+% --- Plot the targets ---
 for k = 1:length(data.arena.Targets)
    target = data.arena.Targets(k);
 
@@ -37,6 +50,7 @@ for k = 1:length(data.arena.Targets)
       'MarkerSize', 8, ...
       'MarkerFaceColor', targetColor);
 
+   % Each target channel has a paired decoy. Plot it here
    pos = [target.DecoyPosition.x-r target.DecoyPosition.z-r 2*r 2*r];
    rectangle('Position', pos, 'Curvature', [1 1], 'EdgeColor', dummyColor);
 
@@ -46,7 +60,10 @@ for k = 1:length(data.arena.Targets)
       % 'MarkerFaceColor', dummyColor);
 end
 
+% --- Plot the other random channels
 for k = 1:length(data.arena.Randos)
+   % This could use some refinement. Plotting only a subset of the randos
+   % to minimize clutter
    if data.arena.Randos(k).Stratum > 6, continue; end
 
    pos = [data.arena.Randos(k).Position.x-r data.arena.Randos(k).Position.z-r 2*r 2*r];
@@ -59,27 +76,32 @@ for k = 1:length(data.arena.Randos)
       'MarkerFaceColor', dummyColor);
 end
 
+% --- Plot the player movement ---
 player = data.player;
 plot(player.X(1), player.Z(1), 's', 'Color', playerColor, 'MarkerFaceColor', playerColor);
 
 plot(player.X, player.Z, '-', 'Color', playerColor);
 
+% Read the attack log and plot the attacks (channel fix attempts)
 attackLog = get_attack_log(player.events);
 
 for k = 1:length(attackLog)
    [~, idx] = min(abs(attackLog(k).time - player.Time));
    h = plot(player.X(idx), player.Z(idx), '^', 'Color', playerColor);
-   if attackLog(k).type == 1
+   if attackLog(k).type == 1 % wrong
       set(h, 'MarkerFaceColor', 'r');
-   elseif attackLog(k).type == 2
+   elseif attackLog(k).type == 2 % right
       set(h, 'MarkerFaceColor', 'g');
    end
 end
 
 axis tight;
-axis square;
+axis equal;
+% axis square;
 axis off;
 
+% Useful for debugging: show the target areas (the puzzle pieces). Requires
+% access to the level layout .json files.
 if options.showTiles
    layout = read_layout(data.level.levelNumber);
    show_tiles(layout);
