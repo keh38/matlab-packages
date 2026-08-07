@@ -127,7 +127,7 @@ end
 
 function report = finish(errors, warnings, n)
     report.ok       = isempty(errors);
-    report.errors   = errors;
+    report.errors   = strjoin(errors, '\n');
     report.warnings = warnings;
     report.nTrials  = n;
     if report.ok
