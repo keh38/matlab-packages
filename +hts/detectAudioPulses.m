@@ -15,6 +15,7 @@ function [ audioTimes ] = detectAudioPulses(pulse, options)
 arguments
    pulse double {mustBeVector}
    options.Fs (1,1) {mustBeNumeric} = 48000
+   options.minInterval (1,1) {mustBeNumeric} = 100
 end
 
 fs = options.Fs;
@@ -38,7 +39,7 @@ if abs(min(mf)) > abs(max(mf))
 end
 
 %% ---- 3. Detect pulses & refine onsets to sub-sample ------------------------
-minDist = round(0.1*fs);                % pulses are ~1 s apart; this is safely below
+minDist = round(0.5*options.minInterval/1000 * fs);
 thresh  = 0.3*max(mf);                  % clean loopback -> generous threshold is fine
 [~, locs] = findpeaks(mf, 'MinPeakDistance', minDist, 'MinPeakHeight', thresh);
 
