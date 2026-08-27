@@ -20,7 +20,10 @@ while true
    if isempty(d), break; end
 
    if ~isempty(data) && ismember(name, fieldnames(data))
-      data.(name)(end+1) = d;
+      try
+         data.(name)(end+1) = d;
+      catch
+      end
    else
       data.(name) = d;
    end
