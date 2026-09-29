@@ -1,23 +1,12 @@
 function TL = merge_avi_log(TL, AVI)
 
-AVI = [AVI(1:410) AVI(410) AVI(411:end)];
+fprintf('[Tosca] merging avi log...\n');
+fprintf('000 / %03d...', numel(TL.trials));
 
 for k = 1:length(TL.trials)
    
-   if ismember(k, [409 410 411])
-      states = TL.trials{k}.states;
-      TL.trials{k} = rmfield(TL.trials{k}, 'states');
-      for ks = 1:length(states)
-         st = states(ks);
-
-         st.frames = [];
-         st.tframe = [];
-
-         TL.trials{k}.states(ks) = st;
-      end
-      continue;
-   end
-
+   fprintf('\b\b\b\b\b\b\b\b\b\b\b\b');
+   fprintf('%03d / %03d...', k, numel(TL.trials));
 
    if abs(TL.trials{k}.start - AVI(k).toscaTime) > 1 || ...
          length(TL.trials{k}.states) < length(AVI(k).states)

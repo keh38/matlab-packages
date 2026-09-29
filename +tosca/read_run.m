@@ -41,7 +41,7 @@ else
    isAdapt = strcmpi(Params.Tosca.Schedule_Mode, 'adapt');
 end
 
-if isnumeric(Params.Info.Version) && Params.Info.Version < 1988
+if isnumeric(Params.Info.Version) && Params.Info.Version > 100 && Params.Info.Version < 1988
    % Parse header line
    s = fgetl(fp);
    c = textscan(s, '%s', 'delimiter', '\t');

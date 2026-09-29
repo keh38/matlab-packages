@@ -1,4 +1,4 @@
-function TL = create_log(FN, varargin)
+function TL = create_log(FN, options)
 % TOSCA_CREATE_LOG -- add timing details to Tosca trial data.
 % Usage: TL = tosca_create_log(FN)
 % Usage: TL = tosca_create_log(FN, 'aviFolder', aviFolder)
@@ -8,9 +8,19 @@ function TL = create_log(FN, varargin)
 % aviFolder : if specified, adds video frame information
 %
 
-aviFolder = fileparts(FN);
-toscaOnly = false;
-epl.file.parse_propval_pairs(varargin{:});
+arguments
+   FN (1,:) char = ''
+   options.aviFolder (1,:) char = fileparts(FN)
+   options.toscaOnly (1,:) logical = false
+   options.verbose (1,:) logical = true
+end
+
+aviFolder = options.aviFolder;
+toscaOnly = options.toscaOnly;
+
+if options.verbose
+   fprintf('[Tosca] creating log...\n');
+end
 
 % Special case: missing .di.txt files, reconstruct from trace file
 [folder, filestem] = fileparts(FN);

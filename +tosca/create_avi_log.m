@@ -1,4 +1,4 @@
-function AVI = tosca_create_avi_log(tl, folder)
+function AVI = create_avi_log(tl, folder)
 % TOSCA_CREATE_AVI_LOG -- parse .avi.txt files into trial-based structure
 % Usage: AVI = tosca_create_avi_log(tl, folder)
 %

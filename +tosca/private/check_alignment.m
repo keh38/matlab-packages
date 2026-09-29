@@ -7,9 +7,11 @@ function Data = check_alignment(P, Data)
 % $Date: 2022-11-30 13:39:07 -0500 (Wed, 30 Nov 2022) $
 %
 
+fprintf('[Tosca] checking alignment...\n');
+
 traceFile = strrep(P.Info.Filename, '.txt', '.trace.txt');
 if exist(traceFile, 'file')
-   tr = tosca.read_trace_data(P.Info.Filename);
+   tr = tosca.read_trace_data(P.Info.Filename, 'flatten', false);
    
    % Check for error where trace file did not get re-started between runs.
    s = tosca.read_trial(P, Data, 1);
@@ -34,7 +36,11 @@ idi = 1;
 ok = true;
 cause = '';
 
+fprintf('000 / %3d...', length(Data));
+
 for k = 1:length(Data)
+   fprintf('\b\b\b\b\b\b\b\b\b\b\b\b');
+   fprintf('%3d / %3d...', k, length(Data));
    if length(Data{k}.History)==1 && startsWith(Data{k}.History{1}, 'ERROR')
       Data{k}.N = -1;
       fprintf('Error (no trial): %d\n', k);
@@ -87,6 +93,8 @@ for k = 1:length(Data)
 
    end
 end
+
+fprintf('\nDone.\n');
 
 if ~ok
    disp(cause);
