@@ -18,6 +18,18 @@ dataMoog = fread(fidMoog, [n_words_sample, inf], 'float32');
 fclose(fidMoog);
 
 data.joystickAngle = dataMoog(10, :);
+
+% 0: disconnected
+% 1: idle
+% 2: active
+% 3: running
+% 4:
+% 5:
+% 6: ???
+data.deviceRunnerState = typecast(single(dataMoog(1,:)), 'uint32');
+
+data.brakeServoBits = typecast(single(dataMoog(4,:)), 'uint32');
+
 data.rollCmd  = dataMoog(16,:) * 180/pi;
 data.pitchCmd = dataMoog(17,:) * 180/pi;
 data.zCmd     = dataMoog(18,:);
