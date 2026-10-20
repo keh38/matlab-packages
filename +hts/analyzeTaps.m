@@ -99,6 +99,7 @@ thrMf   = max(6*sigmaMf, 0.15*max(mf));
 
 onsetSamp = zeros(numel(mflocs), 1);
 amp       = zeros(numel(mflocs), 1);
+ikeep     = true(size(amp));
 for i = 1:numel(mflocs)
     k = mflocs(i);
     if k > 1 && k < numel(mf)
@@ -111,10 +112,14 @@ for i = 1:numel(mflocs)
     onsetSamp(i) = (k + delta) - L + tpk;               % map mf peak -> negative-peak landmark
     % amplitude = depth of the negative phase near this tap
     lo = max(1, round(onsetSamp(i))-2); hi = min(N, round(onsetSamp(i))+2);
-    amp(i) = -min(tap(lo:hi));
+    if hi > lo
+       amp(i) = -min(tap(lo:hi));
+    else
+       ikeep(i) = false;
+    end
 end
-tapTime      = (onsetSamp - 1)/fs;                      % seconds on the ADC clock
-tapAmplitude = -amp;
+tapTime      = (onsetSamp(ikeep) - 1)/fs;                      % seconds on the ADC clock
+tapAmplitude = -amp(ikeep);
 
 %% ---- 3b. Mark which template segments survive to final detection -----------
 % A coarse (template-building) tap is "accepted" if the matched-filter pass

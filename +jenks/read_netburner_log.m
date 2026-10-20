@@ -56,6 +56,11 @@ T0 = t(1);
 Data.itime = t;
 Data.time = double(t - t(1)) * 1e-7;
 Data.late = [d.late];
+Data.activeAbortBits = [d.activeAbortBits];
+Data.stickyAbortBits = [d.stickyAbortBits];
+Data.brakeServoBits = [d.brakeServoBits];
+
+Data.runnerState = [d.runnerState];
 Data.joystickAngle = [d.joystickAngle];
 Data.joystickRawAngle = [d.joyRawAngle];
 
