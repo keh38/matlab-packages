@@ -13,7 +13,7 @@ if nargin < 2, First = 1; end
 if nargin < 3, N = Inf; end
 
 if ischar(H)
-   H = epl.logger.open(H);
+   H = epl.datalogger.open(H);
 end
 
 First = max(First, 1);
